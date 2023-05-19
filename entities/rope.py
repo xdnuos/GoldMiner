@@ -29,7 +29,8 @@ class Rope:
             self.direction += self.speed_swinging * dt
             if self.direction > 155 or self.direction < 25:
                 self.speed_swinging = -self.speed_swinging
-
+            if self.direction > 156 or self.direction < 24:
+                self.direction = 120
             self.x2 = self.x1 + self.length * math.cos(math.radians(self.direction))
             self.y2 = self.y1 + self.length * math.sin(math.radians(self.direction))
 

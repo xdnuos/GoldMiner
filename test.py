@@ -1,24 +1,11 @@
-import pygame
-import random
+import json
 
-WIDTH = 600
-HEIGHT = 600
-FPS = 30 # khung hinh tren giay
+# Đường dẫn đến tệp JSON
+file_path = "levels.json"
 
+# Đọc dữ liệu từ tệp JSON
+with open(file_path, "r") as file:
+    data = json.load(file)
 
-pygame.init()
-pygame.mixer.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("My Game")
-clock = pygame.time.Clock()
-
-# Game loop
-running = True
-while running:
-    dt = clock.tick(60) / 1000
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    print(dt)
-    pygame.display.flip()
-pygame.quit()
+# Truy cập và sử dụng dữ liệu từ dictionary
+print(data["LDEBUG"]['type'])  # Output: John Doe
