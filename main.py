@@ -12,8 +12,8 @@ def main():
             running = False
             return
         manager.scene.handle_events(pygame.event.get())
-        manager.scene.update()
         manager.scene.render(screen)
+        manager.scene.update()
         pygame.display.flip()
 
 if __name__ == "__main__":

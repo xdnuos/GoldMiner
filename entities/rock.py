@@ -1,9 +1,9 @@
 from define import *
 class Rock:
-    def __init__(self,x,y,point):
+    def __init__(self,x,y,size,point):
         self.x = x
         self.y = y
-        self.size = random.choice([25, 50])
+        self.size = size #random.choice([25, 50])
         self.rect = None
         self.is_move = False
         self.point = point

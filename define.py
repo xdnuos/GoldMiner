@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import os
 # load hình ảnh vào pygame
 def load_images(filepaths,is2x = False):
     images = []
@@ -34,9 +35,9 @@ diamond_image = pygame.image.load("./assets/images/diamond.png")
 #init TNT
 tnt_image = pygame.image.load("./assets/images/tnt.png")
 # empty
-empty = pygame.image.load('./assets/images/empty.png').convert()
+empty = pygame.image.load('./assets/images/empty.png')
 # Question Bag
-questionBag = pygame.image.load('./assets/images/question_bag.png').convert()
+questionBag = pygame.image.load('./assets/images/question_bag.png')
 
 #init miner
 miner_files = [
@@ -90,15 +91,25 @@ bg_top = pygame.image.load('./assets/images/bg_top.png').convert()
 
 
 
-MiniGold = 50
-NormalGold  = 100
-NormalGoldPlus = 250
-BigGold = 500
-MiniRock = 11
-NormalRock = 20
-BigRock = 100
-Diamond = 600
-Mole = 2
-MoleWithDiamond = 602
-Skull = 20
-Bone = 7
+MiniGold_point = 50
+NormalGold_point  = 100
+NormalGoldPlus_point = 250
+BigGold_point = 500
+MiniRock_point = 11
+NormalRock_point = 20
+BigRock_point = 100
+Diamond_point = 600
+Mole_point = 2
+MoleWithDiamond_point = 602
+Skull_point = 20
+Bone_point = 7
+
+score = 0
+goal = 650
+# goalAddOn = 270
+def get_score():
+    return score
+
+def set_score(new_score):
+    global score
+    score = new_score

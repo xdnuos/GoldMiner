@@ -1,10 +1,11 @@
 from define import *
 
 class Gold:
-    def __init__(self,point):
-        self.x = random.randint(50, screen_width - 50)
-        self.y = random.randint(200, screen_height - 50)
-        self.size = random.choice([30,70,90,150])
+    def __init__(self,x,y,size,point):
+        self.x = x
+        self.y = y
+        self.size = size
+        # self.size = random.choice([30,70,90,150])
         self.rect = None
         self.is_move = False
         self.point = point

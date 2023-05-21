@@ -5,8 +5,7 @@ class Miner:
         self.pos_y = pos_y
         self.speed = speed
         self.current_frame = 0
-        self.start = 0
-        self.end = 3 #len(self.images)
+        self.list_frame = {0,1,2}
         self.is_moving = False
         self.time = 0
     def draw(self, screen):
