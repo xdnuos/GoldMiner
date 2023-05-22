@@ -156,18 +156,81 @@ def random_level(level_number):
     ran_level = random.randint(1, 3)
     level_text  = "L"+str(level_number)+"_"+str(ran_level)
     return level_text
+def draw_point(rope,dt,miner):
+    if rope.text == "dynamite" and rope.text_direction !="None":
+        rope.time_text -= dt
+        if rope.x_text > 500:
+            rope.text_size += dt*rope.speed /(5)
+        elif rope.text_size > 30 and rope.text_size < 46:
+            rope.time_text = 0.4
+            rope.text_size -= dt*rope.speed /(5)
+        elif rope.text_size > 16 and rope.time_text < 0:
+            rope.text_size -= dt*rope.speed /(25)
+        if rope.time_text < 0:
+            if rope.text_direction == "left":
+                rope.x_text -= dt * rope.speed
+                if rope.x_text <= 500:  # Reached left boundary, change direction
+                    rope.text_direction = "right"
+            elif rope.text_direction == "right":
+                rope.x_text += dt * rope.speed
+                if rope.x_text >= 700:  # Reached right boundary, change direction
+                    rope.text_direction = "None"
+        screen.blit(dynamite_image,(rope.x_text,10))
+    elif rope.text == "strength" and rope.text_direction !="None":
+        rope.time_text -= dt
+        miner.yeah = True
+        miner.start = 6
+        miner.end = 8
+        miner.current_frame = 6
+        if rope.x_text > 400:
+            rope.text_size += dt*rope.speed /(8)
+        elif rope.text_size > 30 and rope.text_size < 46:
+            rope.time_text = 0.4
+            rope.text_size -= dt*rope.speed /(5)
+        elif rope.text_size > 16 and rope.time_text < 0:
+            rope.text_size -= dt*rope.speed
+        if rope.time_text < 0:
+            if rope.text_direction == "left":
+                rope.x_text -= dt * rope.speed
+                if rope.x_text <= 400:  # Reached left boundary, change direction
+                    rope.text_direction = "right"
+            elif rope.text_direction == "right":
+                rope.text_size -= dt*rope.speed /(5)
+                if rope.text_size <= 0:  # Reached right boundary, change direction
+                    miner.yeah = False
+                    print(miner.yeah)
+                    miner.start = 0
+                    miner.end = 3
+                    miner.current_frame = 0
+                    rope.text_direction = "None"
+        text_font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), int(rope.text_size))
+        screen.blit(text_font.render("Sức mạnh", True, (0, 15, 0)), (rope.x_text, rope.y_text))
+    elif rope.text != "" and rope.x_text > 120 and rope.text_direction !="None": # show tiền
+        rope.time_text -= dt
+        if rope.x_text > 500:
+            rope.text_size += dt*rope.speed /(5)
+        elif rope.text_size > 30 and rope.text_size < 46:
+            rope.time_text = 0.2
+            rope.text_size -= dt*rope.speed /(5)
+        elif rope.text_size > 16 and rope.time_text < 0:
+            rope.text_size -= dt*rope.speed /(25)
+        if rope.time_text < 0:
+            rope.x_text -= dt*rope.speed
+        text_font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), int(rope.text_size))
+        screen.blit(text_font.render("+$"+rope.text, True, (0, 15, 0)), (rope.x_text, rope.y_text))
 class GameScene(Scene):
     def __init__(self, level):
         super(GameScene, self).__init__()
         self.level = level
         self.miner = Miner(miner_images, 620, -7, 5)
         self.rope = Rope(643, 45, 300,hoo_images)
-        self.bg,self.items = load_level(random_level(self.level))
+        # self.bg,self.items = load_level(random_level(self.level))
+        self.bg,self.items = load_level("LDEBUG")
         self.play_Explosive = False
         self.explosive = None
         self.text_font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 14)
         self.timer = 0
-    def render(self, screen):
+    def render(self, screen):            
         dt = clock.tick(60) / 1000
         if(self.miner.is_moving == True):
             for item in self.items:
@@ -175,6 +238,8 @@ class GameScene(Scene):
                     self.rope.item = item
                     self.rope.item.is_move = False
                     if item.is_explosive == True:
+                        pygame.mixer.stop()
+                        explosive_sound.play()
                         explosive_item(item,self.items)
                     self.rope.state = 'retracting'
                     self.items.remove(item)
@@ -182,7 +247,7 @@ class GameScene(Scene):
         if(self.miner.is_moving == True and self.rope.state =="expanding"):
             self.miner.start =2
             self.miner.end =3
-        else:
+        elif self.miner.is_TNT == False and self.miner.yeah == False :
             self.miner.start =0
             self.miner.end =3
         #Blit
@@ -193,19 +258,26 @@ class GameScene(Scene):
         for item in self.items:
             item.draw(dt,screen)
         if(self.play_Explosive == True and self.explosive != None):
+            pygame.mixer.stop()
+            explosive_sound.play()
             self.explosive.draw(screen)
             self.explosive.update(dt)
             if (self.explosive.is_exit):
                 del self.explosive
-                self.miner.start = 0
-                self.miner.end = 3
                 self.play_Explosive = False
-                
+                self.miner.is_TNT = False
+                self.miner.start =0 
+                self.miner.end = 3
+                self.miner.current_frame = 0
+                self.rope.is_use_TNT = False
+        for i in range(self.rope.have_TNT):
+            screen.blit(dynamite_image,(725+i*25,10))
         #Update sprite
         self.miner.update(dt)
         self.miner.draw(screen)
         self.rope.update(self.miner,dt,screen)
         self.rope.draw(screen)
+        draw_point(self.rope,dt,self.miner)
     def update(self):
         self.timer = 60 -int(pygame.time.get_ticks()/1000)
         screen.blit(self.text_font.render("Tiền:", True, (0, 0, 0)), (5, 0))
@@ -218,7 +290,6 @@ class GameScene(Scene):
         screen.blit(self.text_font.render(str(self.level), True, (255, 100, 7)), (1190, 25))
     def handle_events(self, events):
         # if(self.timer <0):
-
         for e in events:
             if e.type == pygame.QUIT:
                 pygame.quit()
@@ -233,11 +304,12 @@ class GameScene(Scene):
                 if e.key == pygame.K_c:
                     if(self.rope.have_TNT > 0 and self.rope.item != None):
                         self.rope.is_use_TNT = True
-                        self.miner.time = 3
                         self.miner.start = 3
                         self.miner.end = 5
+                        self.miner.current_frame = 3
                         self.explosive = Explosive(self.rope.x2-128, self.rope.y2-128, 12)
                         self.play_Explosive = True
                         self.rope.have_TNT -=1
                         self.rope.length = 50
+                        self.miner.is_TNT = True
                 

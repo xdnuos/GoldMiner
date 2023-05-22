@@ -4,7 +4,6 @@ from entities.scene import *
 def main():
     pygame.init()
     running = True
-
     manager = SceneMananger()
 
     while running:

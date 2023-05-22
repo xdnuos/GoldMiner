@@ -12,6 +12,7 @@ class TNT:
         self.explosive = Explosive(self.x-128, self.y-128, 12)
         self.is_explosive = True
         self.screen = None
+        self.point = 0
     def draw(self,dt,screen):
         self.screen = screen
         self.dt = dt

@@ -38,7 +38,8 @@ tnt_image = pygame.image.load("./assets/images/tnt.png")
 empty = pygame.image.load('./assets/images/empty.png')
 # Question Bag
 questionBag = pygame.image.load('./assets/images/question_bag.png')
-
+#dynamite
+dynamite_image = pygame.image.load('./assets/images/dynamite.png')
 #init miner
 miner_files = [
     "./assets/images/miner_01.png",
@@ -89,8 +90,16 @@ bgD = pygame.image.load('./assets/images/bg_level_D.jpg').convert()
 bgD = pygame.transform.scale2x(bgD)
 bg_top = pygame.image.load('./assets/images/bg_top.png').convert()
 
-
-
+pygame.mixer.pre_init(frequency=11025, size=-16, channels=2, buffer=2048)
+pygame.init()
+explosive_sound = pygame.mixer.Sound('./assets/audios/explosive.wav')
+goal_sound = pygame.mixer.Sound('./assets/audios/goal.wav')
+grab_back_sound = pygame.mixer.Sound('./assets/audios/grab_back.wav')
+grab_start_sound = pygame.mixer.Sound('./assets/audios/grab_start.wav')
+hook_reset_sound = pygame.mixer.Sound('./assets/audios/hook_reset.wav')
+high_value_sound = pygame.mixer.Sound('./assets/audios/high_value.wav')
+normal_value_sound = pygame.mixer.Sound('./assets/audios/normal_value.wav')
+money_sound = pygame.mixer.Sound('./assets/audios/money.wav')
 MiniGold_point = 50
 NormalGold_point  = 100
 NormalGoldPlus_point = 250
