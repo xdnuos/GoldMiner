@@ -1,14 +1,14 @@
 from define import *
 from entities.hoo import Hoo
 class Rope:
-    def __init__(self, x1, y1, speed,hoo_images):
+    def __init__(self, x1, y1, speed,hoo_images,tnt=0,buffspeed=1):
         self.x1 = x1
         self.y1 = y1
         self.x2 = x1
         self.y2 = y1
         self.length = 50
         self.speed = speed
-        self.buff_speed = 1
+        self.buff_speed = buffspeed
         self.weight = 1
         self.speed_swinging = 50
         self.direction = 90
@@ -18,7 +18,7 @@ class Rope:
         self.hoo = Hoo(self.hoo_images,self.x2, self.y2)
         self.item = None
         self.is_taking = False
-        self.have_TNT = 5
+        self.have_TNT = tnt
         self.is_use_TNT = False
         self.timer = -1
         self.text = ""
@@ -33,11 +33,14 @@ class Rope:
     def update(self, miner, dt,screen):
         if self.timer <= 0:
             if self.state == 'swinging':
+                # print(self.x2,self.y2,self.length,self.direction)
                 self.direction += self.speed_swinging * dt
+                if self.y2 < 60 or self.direction < 24 or self.direction > 156: #fix ket
+                    self.y2 = self.y1 + 50
+                    self.length = 50
+                    self.direction = 90
                 if self.direction > 155 or self.direction < 25:
                     self.speed_swinging = -self.speed_swinging
-                if self.y2 < 60:
-                    self.direction = 120
                 self.x2 = self.x1 + self.length * math.cos(math.radians(self.direction))
                 self.y2 = self.y1 + self.length * math.sin(math.radians(self.direction))
 

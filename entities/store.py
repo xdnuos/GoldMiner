@@ -1,0 +1,3 @@
+from define import *
+
+def

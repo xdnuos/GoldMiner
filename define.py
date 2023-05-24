@@ -17,7 +17,8 @@ screen_height = 820
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 pygame.display.set_caption("Gold Miner Classic")
-
+#init Text Game
+text_game_image = pygame.image.load("./assets/images/text_game.png")
 #init Gold
 gold_image = pygame.image.load("./assets/images/gold.png")
 #init Rock
@@ -89,6 +90,13 @@ bgC = pygame.transform.scale2x(bgC)
 bgD = pygame.image.load('./assets/images/bg_level_D.jpg').convert()
 bgD = pygame.transform.scale2x(bgD)
 bg_top = pygame.image.load('./assets/images/bg_top.png').convert()
+cut_scene = pygame.image.load('./assets/images/cut_scene.jpg').convert()
+miner_menu = pygame.image.load('./assets/images/miner_menu.png')
+miner_menu_rect  = miner_menu.get_rect(bottomright=(screen_width,screen_height))
+hight_score = pygame.image.load('./assets/images/hight_score.png')
+start_BG = pygame.image.load('./assets/images/start_BG.jpg')
+panel_image = pygame.image.load('./assets/images/panel.png')
+panel_image = pygame.transform.scale2x(panel_image)
 
 pygame.mixer.pre_init(frequency=11025, size=-16, channels=2, buffer=2048)
 pygame.init()
@@ -113,9 +121,9 @@ MoleWithDiamond_point = 602
 Skull_point = 20
 Bone_point = 7
 
-score = 0
+score = 15000
 goal = 650
-# goalAddOn = 270
+goalAddOn = 275
 def get_score():
     return score
 def set_score(new_score):
@@ -127,3 +135,25 @@ def get_goal():
 def set_goal(new_goal):
     global goal
     goal = new_goal
+
+pause = False
+def get_pause():
+    return pause
+def set_pause(new_pause):
+    global pause
+    pause = new_pause
+
+start_time = None
+def get_time():
+    return start_time
+
+def set_time(new_pause):
+    global start_time
+    start_time = new_pause
+
+current_level = 1
+def get_level():
+    return current_level
+def set_level(new_level):
+    global current_level
+    current_level = new_level

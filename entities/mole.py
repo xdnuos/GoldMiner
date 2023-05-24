@@ -6,12 +6,13 @@ class Mole:
         self.size = 30
         self.rect = None
         self.is_move = True
+        self.image = image
         if(direction == "Left"):
             self.direction = -1 # -1 : Left | 1 : Right
         else:
             self.direction = 1 # -1 : Left | 1 : Right
-        self.range = [self.x-200,self.x +200]
-        self.image = image
+            self.image = pygame.transform.flip(self.image, True, False)
+        self.range = [self.x-150,self.x +150]
         self.point = point
         self.is_explosive = False
     def draw(self,dt,screen):

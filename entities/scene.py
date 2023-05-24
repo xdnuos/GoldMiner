@@ -10,6 +10,7 @@ from entities.rock import Rock
 from entities.mole import Mole
 from entities.explosive import Explosive
 from entities.question import QuestionBag
+from entities.button import Button
 clock = pygame.time.Clock()
 # Kiểm tra va chạm giữa dây và item
 def is_collision(rope, item):
@@ -25,6 +26,7 @@ def explosive_item(tnt, items):
             items_to_remove.append(item)
     for item in items_to_remove:
         items.remove(item)
+    
 class Scene(object):
     def __init__(self):
         pass
@@ -37,52 +39,68 @@ class Scene(object):
 
     def handle_events(self, events):
         raise NotImplementedError
-class TitleScene(object):
-
+class StartScene(object):
     def __init__(self):
-        super(TitleScene, self).__init__()
-        self.font = pygame.font.SysFont('Arial', 56)
-        self.sfont = pygame.font.SysFont('Arial', 32)
-
+        super(StartScene, self).__init__()
+        self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 48)
+        self.button = Button(120,20,gold_image,2)
+        self.higt_score_btn = Button(80,500,hight_score,1)
     def render(self, screen):
-        screen.fill((0, 200, 0))
-        text1 = self.font.render('Crazy Game', True, (255, 255, 255))
-        text2 = self.sfont.render('> press space to start <', True, (255, 255, 255))
-        screen.blit(text1, (200, 50))
-        screen.blit(text2, (200, 350))
-
+        screen.blit(start_BG,(0,0))
+        if self.button.draw(screen):
+            self.start()
+        if self.higt_score_btn.draw(screen):
+            pass
+        screen.blit(miner_menu,miner_menu_rect)
+        text = self.font.render('Chơi', True, (255, 255, 255))
+        screen.blit(text, (250, 160))
     def update(self):
         pass
-
+    def start(self):
+        set_time(pygame.time.get_ticks()/1000)
+        self.manager.go_to(GameScene(get_level()))
     def handle_events(self, events):
         for e in events:
             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                self.manager.go_to(GameScene(1))
+                self.start()
 class FinishScene(object):
-
     def __init__(self):
-        super(TitleScene, self).__init__()
-        self.font = pygame.font.SysFont('Arial', 56)
-        self.sfont = pygame.font.SysFont('Arial', 32)
-
+        super(FinishScene, self).__init__()
+        self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 28)
     def render(self, screen):
-        screen.fill((0, 200, 0))
-        text1 = self.font.render('Crazy Game', True, (255, 255, 255))
-        text2 = self.sfont.render('> press space to start <', True, (255, 255, 255))
-        screen.blit(text1, (200, 50))
-        screen.blit(text2, (200, 350))
-
+        screen.blit(cut_scene,(0,0))
+        screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
+        text = self.font.render('Level Up!', True, (255, 255, 255))
+        screen.blit(text, text.get_rect(center = (screen_width/2,screen_height/2-28)))
+        text2 = self.font.render('Nhấn phím Space để tiếp tục', True, (255, 255, 255))
+        screen.blit(text2, text2.get_rect(center = (screen_width/2,screen_height/2 +28)))
     def update(self):
         pass
-
     def handle_events(self, events):
         for e in events:
             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                self.manager.go_to(GameScene(1))
+                set_time(pygame.time.get_ticks()/1000)
+                self.manager.go_to(GameScene(get_level()))
+class FailureScene(object):
+    def __init__(self):
+        super(FailureScene, self).__init__()
+        self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 24)
+    def render(self, screen):
+        screen.blit(cut_scene,(0,0))
+        screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
+        text = self.font.render('Bạn đã không đạt đủ điểm yêu cầu!', True, (255, 255, 255))
+        text2 = self.font.render('Bấm phím Space để chơi lại', True, (255, 255, 255))
+        screen.blit(text, text.get_rect(center = (screen_width/2,screen_height/2 - 20 )))
+        screen.blit(text2, text2.get_rect(center = (screen_width/2,screen_height/2 + 20)))
+    def update(self):
+        pass
+    def handle_events(self, events):
+        for e in events:
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                self.manager.go_to(StartScene())
 class SceneMananger(object):
     def __init__(self):
-        self.go_to(TitleScene())
-
+        self.go_to(StartScene())
     def go_to(self, scene):
         self.scene = scene
         self.scene.manager = self
@@ -111,7 +129,7 @@ def load_item(item_data):
         case "Mole":
             item = Mole(x,y,mole_image,Mole_point,direction=item_data["dir"])
         case "MoleWithDiamond":
-            item = Mole(x,y,mole2_image,Mole_point,direction=item_data["dir"])
+            item = Mole(x,y,mole2_image,MoleWithDiamond_point,direction=item_data["dir"])
         case "Skull":
             item = Other(x,y,skull_image,Skull_point)
         case "Bone":
@@ -212,17 +230,19 @@ def draw_point(rope,dt,miner):
         text_font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), int(rope.text_size))
         screen.blit(text_font.render("+$"+rope.text, True, (0, 15, 0)), (rope.x_text, rope.y_text))
 class GameScene(Scene):
-    def __init__(self, level):
+    def __init__(self, level,tnt=0,speed=1):
         super(GameScene, self).__init__()
         self.level = level
         self.miner = Miner(miner_images, 620, -7, 5)
         self.rope = Rope(643, 45, 300,hoo_images)
-        # self.bg,self.items = load_level(random_level(self.level))
-        self.bg,self.items = load_level("LDEBUG")
+        self.bg,self.items = load_level(random_level(self.level))
+        # self.bg,self.items = load_level("LDEBUG")
         self.play_Explosive = False
         self.explosive = None
         self.text_font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 14)
         self.timer = 0
+        self.pause_time = 0
+        self.pause = False
     def render(self, screen):            
         dt = clock.tick(60) / 1000
         if(self.miner.state == 1):
@@ -266,32 +286,45 @@ class GameScene(Scene):
         self.rope.draw(screen)
         draw_point(self.rope,dt,self.miner)
     def update(self):
-        self.timer = 60 -int(pygame.time.get_ticks()/1000)
+        self.timer = 60 - 10*int(pygame.time.get_ticks()/1000 - get_time())
         screen.blit(self.text_font.render("Tiền:", True, (0, 0, 0)), (5, 0))
         screen.blit(self.text_font.render("$"+str(get_score()), True, (0, 150, 0)), (55, 0))
         screen.blit(self.text_font.render("Mục tiêu:", True, (0, 0, 0)), (5, 25))
-        screen.blit(self.text_font.render("$"+str(goal), True, (255, 150, 0)), (96, 25))
+        screen.blit(self.text_font.render("$"+str(get_goal()), True, (255, 150, 0)), (96, 25))
         screen.blit(self.text_font.render("Thời gian:", True, (0, 0, 0)), (1140, 0))
         screen.blit(self.text_font.render(str(self.timer), True, (255, 100, 7)), (1240, 0))
         screen.blit(self.text_font.render("Cấp:", True, (0, 0, 0)), (1140, 25))
         screen.blit(self.text_font.render(str(self.level), True, (255, 100, 7)), (1190, 25))
+    def next_level(self):
+        if get_score() > get_goal():
+            set_level(get_level()+1)
+            set_goal(get_goal()+get_level()*goalAddOn)
+            self.manager.go_to(FinishScene())
+        else:
+            set_level(1)
+            set_goal(650)
+            self.manager.go_to(FailureScene())
     def handle_events(self, events):
         if(self.timer <0):
-            if get_score() > get_goal():
-                pass
+            self.next_level()
         for e in events:
             if e.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit(0)
             if e.type == pygame.KEYDOWN:
-                if e.key == pygame.K_ESCAPE:
-                    # pygame.quit()
-                    # sys.exit(0)
-                    # pygame.time.wait(2000)
-                    self.manager.go_to(TitleScene())
-                if e.key == pygame.K_SPACE and self.rope.timer <=0:
+                if e.key == pygame.K_SPACE: #PAUSE and UNPAUSE
+                    self.pause = not(self.pause)
+                    if self.pause: #PAUSE
+                        self.pause_time = pygame.time.get_ticks()/1000
+                        set_pause(True)
+                    else: #UNPAUSE
+                        set_pause(False)
+                        set_time(get_time() + pygame.time.get_ticks()/1000 - self.pause_time)
+                if e.key == pygame.K_ESCAPE: #ESC -->tesst
+                    self.next_level()
+                if e.key == pygame.K_DOWN and self.rope.timer <=0: # expanding
                     self.miner.state = 1
-                if e.key == pygame.K_c:
+                if e.key == pygame.K_UP: # retracting
                     if(self.rope.have_TNT > 0 and self.rope.item != None):
                         self.rope.is_use_TNT = True
                         self.miner.state = 4
