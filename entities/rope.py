@@ -41,7 +41,7 @@ class Rope:
                 self.x2 = self.x1 + self.length * math.cos(math.radians(self.direction))
                 self.y2 = self.y1 + self.length * math.sin(math.radians(self.direction))
 
-                if miner.is_moving:
+                if miner.state == 1:
                     self.state = 'expanding'
             elif self.state == 'expanding':
                 # pygame.mixer.stop()
@@ -102,11 +102,8 @@ class Rope:
                     self.hoo_image = 0
                     self.weight = 1
                     self.state = 'swinging'
-                    miner.is_moving = False
-                    if(miner.is_TNT == False or miner.yeah == False):
-                        miner.current_frame = 0
-                        pygame.mixer.stop()
-                        hook_reset_sound.play()
+                    if not(self.is_use_TNT):
+                        miner.state = 0 
         else:
             self.timer -= self.speed * dt
             self.speed_swinging = 50

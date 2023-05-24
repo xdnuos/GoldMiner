@@ -2,20 +2,20 @@
     "LDEBUG": {
         "type": "LevelA",
         "entities": [
-            { "type": "MiniGold", "pos": { "x": 320, "y": 240 } },
-            { "type": "NormalGold", "pos": { "x": 420, "y": 450 } },
-            { "type": "NormalGoldPlus", "pos": { "x": 480, "y": 300 } },
-            { "type": "BigGold", "pos": { "x": 80, "y": 390 } },
-            { "type": "MiniRock", "pos": { "x": 300, "y": 390 } },
-            { "type": "NormalRock", "pos": { "x": 520, "y": 600 } },
+            { "type": "QuestionBag", "pos": { "x": 320, "y": 240 } },
+            { "type": "QuestionBag", "pos": { "x": 420, "y": 450 } },
+            { "type": "QuestionBag", "pos": { "x": 480, "y": 300 } },
+            { "type": "QuestionBag", "pos": { "x": 80, "y": 390 } },
+            { "type": "QuestionBag", "pos": { "x": 300, "y": 390 } },
+            { "type": "QuestionBag", "pos": { "x": 520, "y": 600 } },
             { "type": "QuestionBag", "pos": { "x": 420, "y": 630 } },
-            { "type": "Diamond", "pos": { "x": 972, "y": 546 } },
-            { "type": "Mole", "pos": { "x": 800, "y": 450 }, "dir": "Left"},
-            { "type": "MoleWithDiamond", "pos": { "x": 1200, "y": 180 }, "dir": "Left"},
-            { "type": "Skull", "pos": { "x": 800, "y": 240 } },
-            { "type": "Bone", "pos": { "x": 400, "y": 240 } },
-            { "type": "TNT", "pos": { "x": 600, "y": 360 } },
-            { "type": "TNT", "pos": { "x": 600, "y": 480 }
+            { "type": "QuestionBag", "pos": { "x": 972, "y": 546 } },
+            { "type": "QuestionBag", "pos": { "x": 800, "y": 450 }, "dir": "Left"},
+            { "type": "QuestionBag", "pos": { "x": 1200, "y": 180 }, "dir": "Left"},
+            { "type": "QuestionBag", "pos": { "x": 800, "y": 240 } },
+            { "type": "QuestionBag", "pos": { "x": 400, "y": 240 } },
+            { "type": "QuestionBag", "pos": { "x": 600, "y": 360 } },
+            { "type": "QuestionBag", "pos": { "x": 600, "y": 480 }
             }
         ]
     },

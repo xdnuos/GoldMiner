@@ -118,7 +118,12 @@ goal = 650
 # goalAddOn = 270
 def get_score():
     return score
-
 def set_score(new_score):
     global score
     score = new_score
+
+def get_goal():
+    return goal
+def set_goal(new_goal):
+    global goal
+    goal = new_goal

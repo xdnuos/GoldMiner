@@ -178,10 +178,7 @@ def draw_point(rope,dt,miner):
         screen.blit(dynamite_image,(rope.x_text,10))
     elif rope.text == "strength" and rope.text_direction !="None":
         rope.time_text -= dt
-        miner.yeah = True
-        miner.start = 6
-        miner.end = 8
-        miner.current_frame = 6
+        miner.state = 3
         if rope.x_text > 400:
             rope.text_size += dt*rope.speed /(8)
         elif rope.text_size > 30 and rope.text_size < 46:
@@ -197,11 +194,7 @@ def draw_point(rope,dt,miner):
             elif rope.text_direction == "right":
                 rope.text_size -= dt*rope.speed /(5)
                 if rope.text_size <= 0:  # Reached right boundary, change direction
-                    miner.yeah = False
-                    print(miner.yeah)
-                    miner.start = 0
-                    miner.end = 3
-                    miner.current_frame = 0
+                    miner.state = 3
                     rope.text_direction = "None"
         text_font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), int(rope.text_size))
         screen.blit(text_font.render("Sức mạnh", True, (0, 15, 0)), (rope.x_text, rope.y_text))
@@ -232,7 +225,7 @@ class GameScene(Scene):
         self.timer = 0
     def render(self, screen):            
         dt = clock.tick(60) / 1000
-        if(self.miner.is_moving == True):
+        if(self.miner.state == 1):
             for item in self.items:
                 if is_collision(self.rope, item):
                     self.rope.item = item
@@ -244,19 +237,15 @@ class GameScene(Scene):
                     self.rope.state = 'retracting'
                     self.items.remove(item)
                     break
-        if(self.miner.is_moving == True and self.rope.state =="expanding"):
-            self.miner.start =2
-            self.miner.end =3
-        elif self.miner.is_TNT == False and self.miner.yeah == False :
-            self.miner.start =0
-            self.miner.end =3
-        #Blit
+        if self.rope.state == 'retracting' and not(self.rope.is_use_TNT):
+            self.miner.state = 2
         screen.blit(bg_top,(0,0))
         screen.blit(self.bg,(0,72))
 
         #Draw item
         for item in self.items:
             item.draw(dt,screen)
+    
         if(self.play_Explosive == True and self.explosive != None):
             pygame.mixer.stop()
             explosive_sound.play()
@@ -266,9 +255,7 @@ class GameScene(Scene):
                 del self.explosive
                 self.play_Explosive = False
                 self.miner.is_TNT = False
-                self.miner.start =0 
-                self.miner.end = 3
-                self.miner.current_frame = 0
+                self.miner.state = 0
                 self.rope.is_use_TNT = False
         for i in range(self.rope.have_TNT):
             screen.blit(dynamite_image,(725+i*25,10))
@@ -289,7 +276,9 @@ class GameScene(Scene):
         screen.blit(self.text_font.render("Cấp:", True, (0, 0, 0)), (1140, 25))
         screen.blit(self.text_font.render(str(self.level), True, (255, 100, 7)), (1190, 25))
     def handle_events(self, events):
-        # if(self.timer <0):
+        if(self.timer <0):
+            if get_score() > get_goal():
+                pass
         for e in events:
             if e.type == pygame.QUIT:
                 pygame.quit()
@@ -298,15 +287,14 @@ class GameScene(Scene):
                 if e.key == pygame.K_ESCAPE:
                     # pygame.quit()
                     # sys.exit(0)
-                    pygame.time.wait(2000)
+                    # pygame.time.wait(2000)
+                    self.manager.go_to(TitleScene())
                 if e.key == pygame.K_SPACE and self.rope.timer <=0:
-                    self.miner.is_moving = True
+                    self.miner.state = 1
                 if e.key == pygame.K_c:
                     if(self.rope.have_TNT > 0 and self.rope.item != None):
                         self.rope.is_use_TNT = True
-                        self.miner.start = 3
-                        self.miner.end = 5
-                        self.miner.current_frame = 3
+                        self.miner.state = 4
                         self.explosive = Explosive(self.rope.x2-128, self.rope.y2-128, 12)
                         self.play_Explosive = True
                         self.rope.have_TNT -=1
