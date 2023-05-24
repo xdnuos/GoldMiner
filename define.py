@@ -2,6 +2,8 @@ import pygame
 import random
 import math
 import os
+import json
+import sys
 # load hình ảnh vào pygame
 def load_images(filepaths,is2x = False):
     images = []

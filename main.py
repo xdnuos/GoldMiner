@@ -1,5 +1,4 @@
-import pygame
-from entities.scene import *
+from scenes.game_scenes import *
 
 def main():
     pygame.init()
