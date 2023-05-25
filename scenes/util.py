@@ -5,6 +5,7 @@ from entities.other import Other
 from entities.rock import Rock
 from entities.mole import Mole
 from entities.question import QuestionBag
+import datetime
 # Kiểm tra va chạm giữa dây và item
 def is_collision(rope, item):
     if rope.hoo.rect.colliderect(item.rect) and rope.state == 'expanding':
@@ -33,10 +34,7 @@ def load_item(item_data,is_clover=False,is_gem=False,is_rock=False):
         case "NormalGoldPlus":
             item = Gold(x,y,90,NormalGoldPlus_point)
         case "BigGold":
-            if is_rock:
-                item = Gold(x,y,150,BigGold_point*3)
-            else:
-                item = Gold(x,y,150,BigGold_point)
+            item = Gold(x,y,150,BigGold_point)
         case "MiniRock":
             if is_rock:
                 item = Rock(x,y,30,MiniRock_point*3)
@@ -49,6 +47,7 @@ def load_item(item_data,is_clover=False,is_gem=False,is_rock=False):
         case "QuestionBag":
             if is_clover:
                 item = QuestionBag(x,y,lucky=2)
+            else: item = QuestionBag(x,y,lucky=1)
         case "Diamond":
             if is_gem:
                 item = Other(x,y,diamond_image,int(Diamond_point*1.5))
@@ -67,6 +66,7 @@ def load_item(item_data,is_clover=False,is_gem=False,is_rock=False):
         case "TNT":
             item = TNT(x,y)
         case _:
+            print("None")
             item = None
     return item
 def load_items(items_data,is_clover=False,is_gem=False,is_rock=False):
@@ -211,5 +211,76 @@ def buy_item(item_id,price):
                 return True
             else: return False
 
-def get_high_score():
-    
+def get_high_score_from_file():
+    high_scores = []
+    with open(high_score_file, "r") as file:
+        lines = file.readlines()
+        for line in lines:
+            time_score = line.strip().split(": ")
+            time = time_score[0]
+            score = int(time_score[1])
+            high_scores.append({"time": time, "score": score})
+    return high_scores
+def get_high_score_as_text():
+    high_scores = get_high_score_from_file()
+    text = ""
+    for score in high_scores:
+        text += str(score["time"])+"          "+str(score["score"]) + "\n"
+    if text == "":
+        text = "Chưa có danh sách điểm cao"
+    return text
+def write_high_score(score):
+    # Đọc danh sách điểm cao từ file
+    high_scores = get_high_score_from_file()
+    # Lấy thời gian hiện tại
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Thêm điểm cao mới vào danh sách
+    high_scores.append({"time": current_time, "score": score})
+
+    # Sắp xếp danh sách theo điểm số giảm dần
+    high_scores = sorted(high_scores, key=lambda x: x["score"], reverse=True)
+
+    # Giới hạn chỉ lưu 3 điểm cao
+    high_scores = high_scores[:3]
+
+    # Ghi danh sách điểm cao vào file
+    with open(high_score_file, "w") as file:
+        for score in high_scores:
+            file.write(f"{score['time']}: {score['score']}\n")
+
+pygame.mixer.set_num_channels(8)
+voice1 = pygame.mixer.Channel(1)
+voice2 = pygame.mixer.Channel(2)
+voice3 = pygame.mixer.Channel(3)
+voice4 = pygame.mixer.Channel(4)
+voice5 = pygame.mixer.Channel(5)
+voice6 = pygame.mixer.Channel(6)
+def load_sound(sound_name):
+    match sound_name:
+        case "explosive_sound":
+            pygame.mixer.stop()
+            voice1.play(explosive_sound)
+        case "goal_sound":
+            pygame.mixer.stop()
+            voice2.play(goal_sound)
+        case "grab_back_sound":
+            voice4.stop()
+            if not voice3.get_busy():
+                voice3.play(grab_back_sound)
+        case "grab_start_sound":
+            if not voice4.get_busy():
+                voice4.play(grab_start_sound)
+        case "hook_reset_sound":
+            voice3.stop()
+            if not voice5.get_busy() or not voice1.get_busy():
+                voice5.play(hook_reset_sound)
+        case "high_value_sound":
+            high_value_sound.play()
+        case "normal_value_sound":
+            normal_value_sound.play()
+        case "money_sound":
+            money_sound.play()
+        case "made_goal_sound":
+            pygame.mixer.stop()
+            made_goal_sound.play()
+

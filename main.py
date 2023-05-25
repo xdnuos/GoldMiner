@@ -7,6 +7,7 @@ def main():
     font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 28)
     while running:
         if pygame.event.get(pygame.QUIT):
+            write_high_score(get_score())
             running = False
             return
         manager.scene.handle_events(pygame.event.get())

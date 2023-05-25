@@ -1,26 +1,18 @@
-import datetime
+# import json
 
-# Đường dẫn đến file txt
-file_path = "high_scores.txt"
+# # Đường dẫn đến tệp JSON
+# file_path = "data.json"
 
-# Lấy thời gian hiện tại
-current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+# # Đọc tệp JSON
+# with open(file_path, "r") as file:
+#     data = json.load(file)
 
-# Mở file để ghi danh sách điểm cao
-with open(file_path, "a") as file:
-    # Ghi thời gian chơi và điểm số vào file
-    file.write(f"{current_time}: {500}\n")
-
-# Đọc danh sách điểm cao từ file
-high_scores = []
-with open(file_path, "r") as file:
-    lines = file.readlines()
-    for line in lines:
-        time_score = line.strip().split(": ")
-        time = time_score[0]
-        score = int(time_score[1])
-        high_scores.append({"time": time, "score": score})
-
-# In danh sách điểm cao
-for score in high_scores:
-    print(score["time"], score["score"])
+def write_high_score():
+    try:
+        with open(high_score_file, "a") as file:
+            # Ghi thời gian chơi và điểm số vào file
+            file.write(f"{current_time}: {500}\n")
+        return True
+    except:
+        print("có lỗi khi ghi file")
+        return False

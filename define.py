@@ -8,7 +8,7 @@ import sys
 def load_images(filepaths,is2x = False):
     images = []
     for filepath in filepaths:
-        image = pygame.image.load(filepath).convert_alpha()
+        image = pygame.image.load(filepath)
         if is2x:
             image = pygame.transform.scale2x(image)
         images.append(image)
@@ -60,7 +60,7 @@ miner_images = load_images(miner_files)
 # shopkeeper
 shopkeeper_files = [
     "./assets/images/shopkeeper_01.png",
-    "./assets/images/shopkeeper_01.png"
+    "./assets/images/shopkeeper_02.png"
 ]
 shopkeeper_images = load_images(shopkeeper_files)
 #init explosive
@@ -115,7 +115,7 @@ start_BG = pygame.image.load('./assets/images/start_BG.jpg')
 store_BG = pygame.image.load('./assets/images/bg_shop.png')
 
 # ---------------------------------------init sound
-pygame.mixer.pre_init(frequency=11025, size=-16, channels=2, buffer=2048)
+pygame.mixer.pre_init(frequency=11025, size=-16, channels=8, buffer=2048)
 pygame.init()
 explosive_sound = pygame.mixer.Sound('./assets/audios/explosive.wav')
 goal_sound = pygame.mixer.Sound('./assets/audios/goal.wav')
@@ -125,6 +125,7 @@ hook_reset_sound = pygame.mixer.Sound('./assets/audios/hook_reset.wav')
 high_value_sound = pygame.mixer.Sound('./assets/audios/high_value.wav')
 normal_value_sound = pygame.mixer.Sound('./assets/audios/normal_value.wav')
 money_sound = pygame.mixer.Sound('./assets/audios/money.wav')
+made_goal_sound = pygame.mixer.Sound('./assets/audios/made_goal.wav')
 MiniGold_point = 50
 NormalGold_point  = 100
 NormalGoldPlus_point = 250
@@ -139,7 +140,7 @@ Skull_point = 20
 Bone_point = 7
 
 # ---------------------------------------init game parameter
-score = 15000
+score = 0
 goal = 650
 goalAddOn = 275
 def get_score():
@@ -169,9 +170,13 @@ def set_time(new_pause):
     global start_time
     start_time = new_pause
 
-current_level = 5
+current_level = 1
 def get_level():
     return current_level
 def set_level(new_level):
     global current_level
     current_level = new_level
+
+# Đường dẫn đến file txt
+high_score_file = "high_scores.txt"
+high_scores = []

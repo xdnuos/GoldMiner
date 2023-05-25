@@ -9,8 +9,9 @@ class Explosive:
         self.is_exit = False
         self.empty_image = empty
     def draw(self, screen):
-        image = self.images[int(self.current_frame)]
-        screen.blit(image, (self.pos_x, self.pos_y))
+        if self.is_exit == False:
+            image = self.images[int(self.current_frame)]
+            screen.blit(image, (self.pos_x, self.pos_y))
     def update(self, dt):
         if self.is_exit ==  False:
             # print(self.current_frame)

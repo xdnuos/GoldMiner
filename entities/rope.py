@@ -1,4 +1,5 @@
 from define import *
+from scenes.util import load_sound
 from entities.hoo import Hoo
 class Rope:
     def __init__(self, x1, y1, speed,hoo_images,tnt=0,buffspeed=1):
@@ -35,11 +36,11 @@ class Rope:
             if self.state == 'swinging':
                 # print(self.x2,self.y2,self.length,self.direction)
                 self.direction += self.speed_swinging * dt
-                if self.y2 < 60 or self.direction < 24 or self.direction > 156: #fix ket
+                if self.y2 < 54 or self.direction < 14 or self.direction > 166: #fix ket
                     self.y2 = self.y1 + 50
                     self.length = 50
                     self.direction = 90
-                if self.direction > 155 or self.direction < 25:
+                if self.direction > 165 or self.direction < 15:
                     self.speed_swinging = -self.speed_swinging
                 self.x2 = self.x1 + self.length * math.cos(math.radians(self.direction))
                 self.y2 = self.y1 + self.length * math.sin(math.radians(self.direction))
@@ -48,7 +49,8 @@ class Rope:
                     self.state = 'expanding'
             elif self.state == 'expanding':
                 # pygame.mixer.stop()
-                grab_start_sound.play()
+                # grab_start_sound.play()
+                load_sound("grab_start_sound")
                 self.length += self.speed * dt * 1.5
                 self.x2 = self.x1 + self.length * math.cos(math.radians(self.direction))
                 self.y2 = self.y1 + self.length * math.sin(math.radians(self.direction))
@@ -57,7 +59,8 @@ class Rope:
                     self.state = 'retracting'
             elif self.state == 'retracting':
                 # pygame.mixer.stop()
-                grab_back_sound.play()
+                # grab_back_sound.play()
+                load_sound("grab_back_sound")
                 self.length -= (self.speed * dt * self.buff_speed) / self.weight
                 self.x2 = self.x1 + self.length * math.cos(math.radians(self.direction))
                 self.y2 = self.y1 + self.length * math.sin(math.radians(self.direction))
@@ -105,6 +108,7 @@ class Rope:
                     self.hoo_image = 0
                     self.weight = 1
                     self.state = 'swinging'
+                    load_sound("hook_reset_sound")
                     if not(self.is_use_TNT):
                         miner.state = 0 
         else:

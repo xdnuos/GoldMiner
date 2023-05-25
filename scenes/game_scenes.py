@@ -10,7 +10,7 @@ clock = pygame.time.Clock()
     
 class SceneMananger(object):
     def __init__(self):
-        self.go_to(HighScoreScene())
+        self.go_to(StartScene())
     def go_to(self, scene):
         self.scene = scene
         self.scene.manager = self
@@ -31,16 +31,17 @@ class StartScene(object):
         pass
     def start(self):
         set_time(pygame.time.get_ticks()/1000)
-        self.manager.go_to(GameScene(get_level()))
+        self.manager.go_to(GameScene(level=get_level()))
     def handle_events(self, events):
         if self.button.is_click():
             self.start()
         if self.higt_score_btn.is_click():
-            pass
+            self.manager.go_to(HighScoreScene())
 class FinishScene(object):
     def __init__(self):
         super(FinishScene, self).__init__()
         self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 28)
+        load_sound("goal_sound")
     def render(self, screen):
         screen.blit(cut_scene,(0,0))
         screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
@@ -57,6 +58,8 @@ class FinishScene(object):
 class FailureScene(object):
     def __init__(self):
         super(FailureScene, self).__init__()
+        write_high_score(get_score())
+        load_sound("made_goal_sound")
         self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 24)
     def render(self, screen):
         screen.blit(cut_scene,(0,0))
@@ -73,13 +76,15 @@ class FailureScene(object):
 class WinScene(object):
     def __init__(self):
         super(WinScene, self).__init__()
+        write_high_score(get_score())
+        load_sound("goal_sound")
         self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 24)
     def render(self, screen):
         screen.blit(cut_scene,(0,0))
         screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
         screen.blit(text_game_image,text_game_image.get_rect(center = (screen_width/2,200)))
-        text = 'Chúc mừng bạn đã chiến thắng\ntrong trò chơi này!'
-        blit_text(screen,text,(377,350),self.font,color=(255,255,255))
+        text = 'Chúc mừng bạn đã chiến thắng\ntrong trò chơi này!\n\nNhấn phím Space để chơi lại'
+        blit_text(screen,text,(377,300),self.font,color=(255,255,255))
     def update(self,screen):
         pass
     def handle_events(self, events):
@@ -90,19 +95,21 @@ class HighScoreScene(object):
     def __init__(self):
         super(HighScoreScene, self).__init__()
         self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 24)
+        self.continute = Button(1050,50,continue_img,0.5)
     def render(self, screen):
         screen.blit(cut_scene,(0,0))
         screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
         screen.blit(text_game_image,text_game_image.get_rect(center = (screen_width/2,200)))
         screen.blit(self.font.render('ĐIỂM CAO', True, (255, 255, 255)), (560, 300))
-        text = 'Chúc mừng bạn đã chiến thắng\ntrong trò chơi này!'
+        self.continute.render(screen)
+        text = get_high_score_as_text()
         blit_text(screen,text,(377,350),self.font,color=(255,255,255))
     def update(self,screen):
         pass
     def handle_events(self, events):
-        for e in events:
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                self.manager.go_to(StartScene())
+        if self.continute.is_click():
+            self.manager.go_to(StartScene())
+                
 class StoreScene(object):
     def __init__(self):
         super(StoreScene, self).__init__()
@@ -139,11 +146,11 @@ class StoreScene(object):
         self.is_buy = False
 
         self.buyTNT = 0
-        self.buyRock = True
-        self.buyGem = True
-        self.buyClover = True
+        self.buyRock = False
+        self.buyGem = False
+        self.buyClover = False
         self.buyDrink = 1
-    def render(self, screen):
+    def render(self, screen):            
         screen.blit(store_BG,(0,0))
         screen.blit(self.font.render("Tiền: "+str(get_score()), True, (0, 0, 0)), (5, 0))
         self.shopkeeper.draw(screen)
@@ -219,6 +226,11 @@ class StoreScene(object):
                     self.buyTNT =1
                     self.is_dynamite = False
         if self.continute.is_click():
+            if not(self.is_buy):    
+                # self.shopkeeper.current_frame = 1
+                # self.render(screen)
+                # pygame.time.wait(2000)
+                pass #need fix
             self.start(self.buyTNT,self.buyDrink,self.buyClover,self.buyGem,self.buyRock)
         for e in events:
             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
@@ -248,8 +260,8 @@ class GameScene(Scene):
                     self.rope.item = item
                     self.rope.item.is_move = False
                     if item.is_explosive == True:
-                        pygame.mixer.stop()
-                        explosive_sound.play()
+                        # pygame.mixer.stop()
+                        load_sound("explosive_sound")
                         explosive_item(item,self.items)
                     self.rope.state = 'retracting'
                     self.items.remove(item)
@@ -264,8 +276,9 @@ class GameScene(Scene):
             item.draw(dt,screen)
     
         if(self.play_Explosive == True and self.explosive != None):
-            pygame.mixer.stop()
-            explosive_sound.play()
+            # pygame.mixer.stop()
+            # explosive_sound.play()
+            load_sound("explosive_sound")
             self.explosive.draw(screen)
             self.explosive.update(dt)
             if (self.explosive.is_exit):
@@ -283,7 +296,7 @@ class GameScene(Scene):
         self.rope.draw(screen)
         draw_point(self.rope,dt,self.miner)
     def update(self,screen):
-        self.timer = 60 - int(pygame.time.get_ticks()/1000 - get_time())
+        self.timer = 60 - 10*int(pygame.time.get_ticks()/1000 - get_time())
         screen.blit(self.text_font.render("Tiền:", True, (0, 0, 0)), (5, 0))
         screen.blit(self.text_font.render("$"+str(get_score()), True, (0, 150, 0)), (55, 0))
         screen.blit(self.text_font.render("Mục tiêu:", True, (0, 0, 0)), (5, 25))
@@ -295,6 +308,9 @@ class GameScene(Scene):
     def next_level(self):
         if get_score() > get_goal():
             set_level(get_level()+1)
+            if get_level() >10:
+                self.manager.go_to(WinScene())
+                return
             set_goal(get_goal()+get_level()*goalAddOn)
             self.manager.go_to(FinishScene())
         else:
@@ -306,6 +322,7 @@ class GameScene(Scene):
             self.next_level()
         for e in events:
             if e.type == pygame.QUIT:
+                write_high_score(get_score())
                 pygame.quit()
                 sys.exit(0)
             if e.type == pygame.KEYDOWN:
