@@ -1,4 +1,5 @@
-from define import *
+import pygame
+from define import rock_image
 class Rock:
     def __init__(self,x,y,size,point):
         self.x = x
@@ -8,8 +9,9 @@ class Rock:
         self.is_move = False
         self.point = point
         self.is_explosive = False
+        self.rock_image = rock_image
     def draw(self,dt,screen):
-        scaled_gold = pygame.transform.scale(rock_image, (self.size, self.size))
+        scaled_gold = pygame.transform.scale(self.rock_image, (self.size, self.size))
         self.rect = scaled_gold.get_rect(center=(self.x,self.y))
         screen.blit(scaled_gold, self.rect)
     def update(self,x,y):

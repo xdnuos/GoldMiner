@@ -1,5 +1,5 @@
-from define import *
-
+import pygame
+from define import gold_image
 class Gold:
     def __init__(self,x,y,size,point):
         self.x = x
@@ -10,8 +10,9 @@ class Gold:
         self.is_move = False
         self.point = point
         self.is_explosive = False
+        self.gold_image = gold_image
     def draw(self,dt,screen):
-        scaled_gold = pygame.transform.scale(gold_image, (self.size, self.size))
+        scaled_gold = pygame.transform.scale(self.gold_image, (self.size, self.size))
         self.rect = scaled_gold.get_rect(center=(self.x,self.y))
         screen.blit(scaled_gold, self.rect)
     def update(self,x,y):

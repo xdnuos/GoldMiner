@@ -15,7 +15,7 @@ class Rope:
         self.state = 'swinging'
         self.hoo_images = hoo_images
         self.hoo_image = 0
-        self.hoo = Hoo(self.hoo_images,self.x2, self.y2)
+        self.hoo = Hoo(self.x2, self.y2)
         self.item = None
         self.is_taking = False
         self.have_TNT = tnt

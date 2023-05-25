@@ -1,4 +1,4 @@
-from define import *
+import pygame,random
 class Mole:
     def __init__(self,x,y,image,point,direction):
         self.x = x
@@ -12,12 +12,17 @@ class Mole:
         else:
             self.direction = 1 # -1 : Left | 1 : Right
             self.image = pygame.transform.flip(self.image, True, False)
-        self.range = [self.x-150,self.x +150]
+        range = random.randint(120,200)
+        self.ranges = [self.x-range,self.x +range]
         self.point = point
         self.is_explosive = False
     def draw(self,dt,screen):
+        # print(self.x,self.y,self.direction,self.ranges)
         self.rect = self.image.get_rect(center=(self.x,self.y))
-        if ((self.x < self.range[0] or self.x > self.range[1]) and self.is_move == True):
+        if ((self.x < self.ranges[0]-4 or self.x > self.ranges[1]+4) and self.is_move == True):
+            self.x = (self.ranges[0] + self.ranges[1])/2
+            print("Reset mole position")
+        if ((self.x < self.ranges[0] or self.x > self.ranges[1]) and self.is_move == True):
             self.image = pygame.transform.flip(self.image, True, False)
             self.direction = -self.direction
         screen.blit(self.image, self.rect)

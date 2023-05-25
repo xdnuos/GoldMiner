@@ -1,16 +1,17 @@
+from define import miner_images
 class Miner:
-    def __init__(self, images, pos_x, pos_y, speed):
+    def __init__(self, pos_x, pos_y, speed):
         '''
         swinging = 0 | expanding = 1 | retracting = 2 | yeah = 3 | TNT = 4
         '''
-        self.images = images
+        self.images = miner_images
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.speed = speed
         self.current_frame = 0
         self.state = 0
         self.is_play_done = False
-        self.list_frame = [0,1,2] #need fix: remove start and end, change to number of frame
+        self.list_frame = [0,1,2]
     def draw(self, screen):
         image = self.images[self.list_frame[int(self.current_frame)]]
         screen.blit(image, (self.pos_x, self.pos_y))

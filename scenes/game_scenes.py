@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-import pygame,sys
 from entities.miner import Miner
 from entities.rope import Rope
 from entities.explosive import Explosive
 from entities.button import Button
+from entities.shopkeeper import Shopkeeper
 from scenes.scene import Scene
 from scenes.util import *
 clock = pygame.time.Clock()
     
 class SceneMananger(object):
     def __init__(self):
-        self.go_to(StartScene())
+        self.go_to(HighScoreScene())
     def go_to(self, scene):
         self.scene = scene
         self.scene.manager = self
@@ -22,22 +22,21 @@ class StartScene(object):
         self.higt_score_btn = Button(80,500,hight_score,1)
     def render(self, screen):
         screen.blit(start_BG,(0,0))
-        if self.button.draw(screen):
-            self.start()
-        if self.higt_score_btn.draw(screen):
-            pass
+        self.button.render(screen)
+        self.higt_score_btn.render(screen)
         screen.blit(miner_menu,miner_menu_rect)
         text = self.font.render('Chơi', True, (255, 255, 255))
         screen.blit(text, (250, 160))
-    def update(self):
+    def update(self,screen):
         pass
     def start(self):
         set_time(pygame.time.get_ticks()/1000)
         self.manager.go_to(GameScene(get_level()))
     def handle_events(self, events):
-        for e in events:
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                self.start()
+        if self.button.is_click():
+            self.start()
+        if self.higt_score_btn.is_click():
+            pass
 class FinishScene(object):
     def __init__(self):
         super(FinishScene, self).__init__()
@@ -45,17 +44,16 @@ class FinishScene(object):
     def render(self, screen):
         screen.blit(cut_scene,(0,0))
         screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
-        text = self.font.render('Level Up!', True, (255, 255, 255))
-        screen.blit(text, text.get_rect(center = (screen_width/2,screen_height/2-28)))
-        text2 = self.font.render('Nhấn phím Space để tiếp tục', True, (255, 255, 255))
-        screen.blit(text2, text2.get_rect(center = (screen_width/2,screen_height/2 +28)))
-    def update(self):
+        screen.blit(text_game_image,text_game_image.get_rect(center = (screen_width/2,200)))
+        text = 'Level Up!\nNhấn phím Space để tiếp tục'
+        blit_text(screen,text,(377,330),self.font,color=(255,255,255))
+    def update(self,screen):
         pass
     def handle_events(self, events):
         for e in events:
             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
                 set_time(pygame.time.get_ticks()/1000)
-                self.manager.go_to(GameScene(get_level()))
+                self.manager.go_to(StoreScene())
 class FailureScene(object):
     def __init__(self):
         super(FailureScene, self).__init__()
@@ -63,11 +61,43 @@ class FailureScene(object):
     def render(self, screen):
         screen.blit(cut_scene,(0,0))
         screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
-        text = self.font.render('Bạn đã không đạt đủ điểm yêu cầu!', True, (255, 255, 255))
-        text2 = self.font.render('Bấm phím Space để chơi lại', True, (255, 255, 255))
-        screen.blit(text, text.get_rect(center = (screen_width/2,screen_height/2 - 20 )))
-        screen.blit(text2, text2.get_rect(center = (screen_width/2,screen_height/2 + 20)))
-    def update(self):
+        screen.blit(text_game_image,text_game_image.get_rect(center = (screen_width/2,200)))
+        text = 'Bạn đã không đạt đủ điểm yêu cầu!\nBấm phím Space để chơi lại'
+        blit_text(screen,text,(377,350),self.font,color=(255,255,255))
+    def update(self,screen):
+        pass
+    def handle_events(self, events):
+        for e in events:
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                self.manager.go_to(StartScene())
+class WinScene(object):
+    def __init__(self):
+        super(WinScene, self).__init__()
+        self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 24)
+    def render(self, screen):
+        screen.blit(cut_scene,(0,0))
+        screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
+        screen.blit(text_game_image,text_game_image.get_rect(center = (screen_width/2,200)))
+        text = 'Chúc mừng bạn đã chiến thắng\ntrong trò chơi này!'
+        blit_text(screen,text,(377,350),self.font,color=(255,255,255))
+    def update(self,screen):
+        pass
+    def handle_events(self, events):
+        for e in events:
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                self.manager.go_to(StartScene())
+class HighScoreScene(object):
+    def __init__(self):
+        super(HighScoreScene, self).__init__()
+        self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 24)
+    def render(self, screen):
+        screen.blit(cut_scene,(0,0))
+        screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
+        screen.blit(text_game_image,text_game_image.get_rect(center = (screen_width/2,200)))
+        screen.blit(self.font.render('ĐIỂM CAO', True, (255, 255, 255)), (560, 300))
+        text = 'Chúc mừng bạn đã chiến thắng\ntrong trò chơi này!'
+        blit_text(screen,text,(377,350),self.font,color=(255,255,255))
+    def update(self,screen):
         pass
     def handle_events(self, events):
         for e in events:
@@ -77,27 +107,132 @@ class StoreScene(object):
     def __init__(self):
         super(StoreScene, self).__init__()
         self.font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), 28)
+        self.shopkeeper = Shopkeeper(900,250)
+        self.continute = Button(1050,50,continue_img,0.5)
+
+        self.rock_collectors_book = Button(87,420,rock_collectors_book,2)
+        self.is_rock = random.randint(0,1)
+        if self.is_rock:
+            self.rock_price = random.randint(10,150)
+
+        self.strength_drink = Button(300,400,strength_drink,2)
+        self.is_strength_drink = random.randint(0,1)
+        if self.is_strength_drink:
+            self.strength_drink_price = random.randint(0,300)+100
+
+        self.gem_polish = Button(500,440,gem_polish,2)
+        self.is_gem_polish = random.randint(0,1)
+        if self.is_gem_polish:
+            self.gem_polish_price = random.randint(0,get_level()*100) +200
+
+        self.clover = Button(650,420,clover,2)
+        self.is_clover = random.randint(0,1)
+        if self.is_clover:
+            self.clover_price = random.randint(0,get_level()*50) + get_level()*2 + 1
+
+        self.dynamite = Button(800,425,dynamite_shop,2)
+        self.is_dynamite = random.randint(0,1)
+        if self.is_dynamite:
+            self.dynamite_price = random.randint(0,300) + 1 + get_level()*2
+
+        self.text = 'Click vào vật phẩm mà bạn muốn mua\nClick vào tiếp tục khi bạn đã sẵn sàng'
+        self.is_buy = False
+
+        self.buyTNT = 0
+        self.buyRock = True
+        self.buyGem = True
+        self.buyClover = True
+        self.buyDrink = 1
     def render(self, screen):
-        screen.blit(cut_scene,(0,0))
-        screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
-        text = self.font.render('Level Up!', True, (255, 255, 255))
-        screen.blit(text, text.get_rect(center = (screen_width/2,screen_height/2-28)))
-        text2 = self.font.render('Nhấn phím Space để tiếp tục', True, (255, 255, 255))
-        screen.blit(text2, text2.get_rect(center = (screen_width/2,screen_height/2 +28)))
-    def update(self):
-        pass
+        screen.blit(store_BG,(0,0))
+        screen.blit(self.font.render("Tiền: "+str(get_score()), True, (0, 0, 0)), (5, 0))
+        self.shopkeeper.draw(screen)
+        screen.blit(table_image,table_image.get_rect(bottom = screen_height))
+        screen.blit(dialog_image,(220,100))
+        self.continute.render(screen)
+        if self.is_rock:
+            self.rock_collectors_book.render(screen)
+            blit_nor_text(screen,"$"+str(self.rock_price),(140,565),self.font,color=(0,150,0))
+        if self.is_strength_drink:
+            self.strength_drink.render(screen)
+            blit_nor_text(screen,"$"+str(self.strength_drink_price),(350,565),self.font,color=(0,150,0))
+        if self.is_gem_polish:
+            self.gem_polish.render(screen)
+            blit_nor_text(screen,"$"+str(self.gem_polish_price),(550,565),self.font,color=(0,150,0))
+        if self.is_clover:
+            self.clover.render(screen)
+            blit_nor_text(screen,"$"+str(self.clover_price),(690,565),self.font,color=(0,150,0))
+        if self.is_dynamite:
+            self.dynamite.render(screen)
+            blit_nor_text(screen,"$"+str(self.dynamite_price),(820,565),self.font,color=(0,150,0))
+        blit_text(screen,self.text,(250,110),self.font,color=(0,0,0))
+    def update(self,screen): #handel hover
+        if self.is_rock:
+            if self.rock_collectors_book.is_hover():
+                text = "Sách Người sưu tầm đá. Đá sẽ có giá trị\ngấp ba lần ở cấp độ tiếp theo.\nChỉ áp dụng cho 1 cấp độ."
+                blit_text(screen,text,(250,620),self.font,color=(255,255,255))
+        if self.is_strength_drink:
+            if self.strength_drink.is_hover():
+                text = "Nước tăng lực. Tốc độ kéo vật phẩm của bạn sẽ\nnhanh hơn một chút ở cấp độ tiếp theo.\nĐồ uống chỉ kéo dài trong một cấp độ."
+                blit_text(screen,text,(250,620),self.font,color=(255,255,255))
+        if self.is_gem_polish:
+            if self.gem_polish.is_hover():
+                text = "Đánh bóng đá quý. Trong cấp độ tiếp theo,\nđá quý và kim cương sẽ có giá trị cao hơn.\nChỉ áp dụng cho 1 cấp độ."
+                blit_text(screen,text,(250,620),self.font,color=(255,255,255))
+        if self.is_clover:
+            if self.clover.is_hover():
+                text = "Cỏ may mắn. Vật phẩm này sẽ tăng cơ hội\nnhận được thứ gì đó tốt từ túi ở cấp độ tiếp theo.\nChỉ áp dụng cho 1 cấp độ."
+                blit_text(screen,text,(250,620),self.font,color=(255,255,255))
+        if self.is_dynamite:
+            if self.dynamite.is_hover():
+                text = "Sau khi bạn kéo được thứ gì đó không có giá trị,\nhãy nhấn phím lên để ném một mảnh thuốc nổ\nvào nó và cho nổ tung nó."
+                blit_text(screen,text,(250,620),self.font,color=(255,255,255))
     def handle_events(self, events):
+        if self.is_rock:
+            if self.rock_collectors_book.is_click():
+                if buy_item(1,self.rock_price):
+                    self.is_buy = True
+                    self.buyRock = True
+                    self.is_rock = False
+        if self.is_strength_drink:
+            if self.strength_drink.is_click():
+                if buy_item(2,self.strength_drink_price):
+                    self.is_buy = True
+                    self.buyDrink = 2
+                    self.is_strength_drink = False
+        if self.is_gem_polish:
+            if self.gem_polish.is_click():
+                if buy_item(3,self.gem_polish_price):
+                    self.is_buy = True
+                    self.buyGem = True
+                    self.is_gem_polish = False
+        if self.is_clover:
+            if self.clover.is_click():
+                if buy_item(4,self.clover_price):
+                    self.is_buy = True
+                    self.buyClover = True
+                    self.is_clover = False
+        if self.is_dynamite:
+            if self.dynamite.is_click():
+                if buy_item(5,self.dynamite_price):
+                    self.is_buy = True
+                    self.buyTNT =1
+                    self.is_dynamite = False
+        if self.continute.is_click():
+            self.start(self.buyTNT,self.buyDrink,self.buyClover,self.buyGem,self.buyRock)
         for e in events:
             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                set_time(pygame.time.get_ticks()/1000)
-                self.manager.go_to(GameScene(get_level()))
+                self.start(self.buyTNT,self.buyDrink,self.buyClover,self.buyGem,self.buyRock)
+    def start(self,tnt=0,speed=1,clover =0,gem =0, rock =0):
+            set_time(pygame.time.get_ticks()/1000)
+            self.manager.go_to(GameScene(get_level(),tnt,speed,clover,gem,rock))
 class GameScene(Scene):
-    def __init__(self, level,tnt=0,speed=1):
+    def __init__(self, level,tnt=0,speed=1,is_clover =False,is_gem =False, is_rock =False):
         super(GameScene, self).__init__()
         self.level = level
-        self.miner = Miner(miner_images, 620, -7, 5)
-        self.rope = Rope(643, 45, 300,hoo_images)
-        self.bg,self.items = load_level(random_level(self.level))
+        self.miner = Miner(620, -7, 5)
+        self.rope = Rope(643, 45, 300,hoo_images,tnt,speed)
+        self.bg,self.items = load_level(random_level(self.level),is_clover,is_gem,is_rock)
         # self.bg,self.items = load_level("LDEBUG")
         self.play_Explosive = False
         self.explosive = None
@@ -147,8 +282,8 @@ class GameScene(Scene):
         self.rope.update(self.miner,dt,screen)
         self.rope.draw(screen)
         draw_point(self.rope,dt,self.miner)
-    def update(self):
-        self.timer = 60 - 10*int(pygame.time.get_ticks()/1000 - get_time())
+    def update(self,screen):
+        self.timer = 60 - int(pygame.time.get_ticks()/1000 - get_time())
         screen.blit(self.text_font.render("Tiền:", True, (0, 0, 0)), (5, 0))
         screen.blit(self.text_font.render("$"+str(get_score()), True, (0, 150, 0)), (55, 0))
         screen.blit(self.text_font.render("Mục tiêu:", True, (0, 0, 0)), (5, 25))

@@ -14,11 +14,13 @@ def load_images(filepaths,is2x = False):
         images.append(image)
     return images
 
+# ---------------------------------------init game setting
 screen_width = 1280
 screen_height = 820
 screen = pygame.display.set_mode((screen_width, screen_height))
-
 pygame.display.set_caption("Gold Miner Classic")
+
+# ---------------------------------------init game entities
 #init Text Game
 text_game_image = pygame.image.load("./assets/images/text_game.png")
 #init Gold
@@ -37,7 +39,7 @@ bone_image = pygame.image.load("./assets/images/bone.png")
 diamond_image = pygame.image.load("./assets/images/diamond.png")
 #init TNT
 tnt_image = pygame.image.load("./assets/images/tnt.png")
-# empty
+# empty image
 empty = pygame.image.load('./assets/images/empty.png')
 # Question Bag
 questionBag = pygame.image.load('./assets/images/question_bag.png')
@@ -55,6 +57,12 @@ miner_files = [
     "./assets/images/miner_08.png"
 ]
 miner_images = load_images(miner_files)
+# shopkeeper
+shopkeeper_files = [
+    "./assets/images/shopkeeper_01.png",
+    "./assets/images/shopkeeper_01.png"
+]
+shopkeeper_images = load_images(shopkeeper_files)
 #init explosive
 explosive_files = [
     "./assets/images/ex1.png",
@@ -69,11 +77,6 @@ explosive_files = [
 ]
 explosive_images = load_images(explosive_files,True)
 
-#init empties
-empty_files = [
-    "./assets/images/empty.png"
-]
-empty_images = load_images(empty_files,True)
 #init hoo
 hoo_files = [
     "./assets/images/hoo_01.png",
@@ -81,8 +84,21 @@ hoo_files = [
     "./assets/images/hoo_03.png"
 ]
 hoo_images = load_images(hoo_files)
+hight_score = pygame.image.load('./assets/images/hight_score.png')
+panel_image = pygame.image.load('./assets/images/panel.png')
+panel_image = pygame.transform.scale2x(panel_image)
+table_image = pygame.image.load('./assets/images/shop_table.png')
+dialog_image = pygame.image.load('./assets/images/ui_dialog.png')
+dialog_image = pygame.transform.scale2x(dialog_image)
+continue_img = pygame.image.load('./assets/images/continue.png')
+#init shop item
+rock_collectors_book = pygame.image.load('./assets/images/rock_collectors_book.png')
+strength_drink = pygame.image.load('./assets/images/strength_drink.png')
+gem_polish = pygame.image.load('./assets/images/gem_polish.png')
+clover = pygame.image.load('./assets/images/clover.png')
+dynamite_shop = pygame.image.load('./assets/images/dynamite_shop.png')
 
-#init BG
+# ---------------------------------------init BG
 bgA = pygame.image.load('./assets/images/bg_level_A.jpg').convert()
 bgA = pygame.transform.scale2x(bgA)
 bgB = pygame.image.load('./assets/images/bg_level_B.jpg').convert()
@@ -95,11 +111,10 @@ bg_top = pygame.image.load('./assets/images/bg_top.png').convert()
 cut_scene = pygame.image.load('./assets/images/cut_scene.jpg').convert()
 miner_menu = pygame.image.load('./assets/images/miner_menu.png')
 miner_menu_rect  = miner_menu.get_rect(bottomright=(screen_width,screen_height))
-hight_score = pygame.image.load('./assets/images/hight_score.png')
 start_BG = pygame.image.load('./assets/images/start_BG.jpg')
-panel_image = pygame.image.load('./assets/images/panel.png')
-panel_image = pygame.transform.scale2x(panel_image)
+store_BG = pygame.image.load('./assets/images/bg_shop.png')
 
+# ---------------------------------------init sound
 pygame.mixer.pre_init(frequency=11025, size=-16, channels=2, buffer=2048)
 pygame.init()
 explosive_sound = pygame.mixer.Sound('./assets/audios/explosive.wav')
@@ -123,6 +138,7 @@ MoleWithDiamond_point = 602
 Skull_point = 20
 Bone_point = 7
 
+# ---------------------------------------init game parameter
 score = 15000
 goal = 650
 goalAddOn = 275
@@ -153,7 +169,7 @@ def set_time(new_pause):
     global start_time
     start_time = new_pause
 
-current_level = 1
+current_level = 5
 def get_level():
     return current_level
 def set_level(new_level):

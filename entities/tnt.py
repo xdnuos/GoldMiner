@@ -1,4 +1,4 @@
-from define import *
+from define import tnt_image,empty
 from entities.explosive import Explosive
 class TNT:
     def __init__(self,x,y):

@@ -1,13 +1,13 @@
-from define import *
+import pygame
+from define import hoo_images
 class Hoo:
-    def __init__(self,images, x, y):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
         self.direction = 0
-        self.images = images
+        self.images = hoo_images
         self.current_frame=0
         self.rect = None
-        
     def draw(self, screen):
         image = self.images[int(self.current_frame)]
         image = pygame.transform.rotate(image,self.direction)

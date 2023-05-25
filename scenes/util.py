@@ -20,7 +20,7 @@ def explosive_item(tnt, items):
     for item in items_to_remove:
         items.remove(item)
         
-def load_item(item_data):
+def load_item(item_data,is_clover=False,is_gem=False,is_rock=False):
     item_name = item_data["type"]
     x = item_data["pos"]["x"]
     y = item_data["pos"]["y"]
@@ -33,19 +33,33 @@ def load_item(item_data):
         case "NormalGoldPlus":
             item = Gold(x,y,90,NormalGoldPlus_point)
         case "BigGold":
-            item = Gold(x,y,150,BigGold_point)
+            if is_rock:
+                item = Gold(x,y,150,BigGold_point*3)
+            else:
+                item = Gold(x,y,150,BigGold_point)
         case "MiniRock":
-            item = Rock(x,y,30,MiniRock_point)
+            if is_rock:
+                item = Rock(x,y,30,MiniRock_point*3)
+            else: item = Rock(x,y,30,MiniRock_point)
         case "NormalRock":
-            item = Rock(x,y,60,NormalRock_point)
+            if is_rock:
+                item = Rock(x,y,60,NormalRock_point*3)
+            else:
+                item = Rock(x,y,60,NormalRock_point)
         case "QuestionBag":
-            item = QuestionBag(x,y)
+            if is_clover:
+                item = QuestionBag(x,y,lucky=2)
         case "Diamond":
-            item = Other(x,y,diamond_image,Diamond_point)
+            if is_gem:
+                item = Other(x,y,diamond_image,int(Diamond_point*1.5))
+            else: item = Other(x,y,diamond_image,Diamond_point)
         case "Mole":
             item = Mole(x,y,mole_image,Mole_point,direction=item_data["dir"])
         case "MoleWithDiamond":
-            item = Mole(x,y,mole2_image,MoleWithDiamond_point,direction=item_data["dir"])
+            if is_gem:
+                item = Mole(x,y,mole2_image,int(Diamond_point*1.5)+2,direction=item_data["dir"])
+            else:
+                item = Mole(x,y,mole2_image,MoleWithDiamond_point,direction=item_data["dir"])
         case "Skull":
             item = Other(x,y,skull_image,Skull_point)
         case "Bone":
@@ -55,13 +69,13 @@ def load_item(item_data):
         case _:
             item = None
     return item
-def load_items(items_data):
+def load_items(items_data,is_clover=False,is_gem=False,is_rock=False):
     items = []
     for item in items_data:
         # if(item != None):
-        items.append(load_item(item))
+        items.append(load_item(item,is_clover,is_gem,is_rock))
     return items
-def load_level(level):
+def load_level(level,is_clover,is_gem,is_rock):
     bg_name = None
     bg = None
     file_path = "levels.game"
@@ -85,7 +99,7 @@ def load_level(level):
     except:
         print("No file levels.game!")
         sys.exit(0)
-    return bg,load_items(data[level]['entities'])
+    return bg,load_items(data[level]['entities'],is_clover,is_gem,is_rock)
 def random_level(level_number):
     ran_level = random.randint(1, 3)
     level_text  = "L"+str(level_number)+"_"+str(ran_level)
@@ -145,3 +159,57 @@ def draw_point(rope,dt,miner):
             rope.x_text -= dt*rope.speed
         text_font = pygame.font.Font(os.path.join("assets", "fonts", 'Fernando.ttf'), int(rope.text_size))
         screen.blit(text_font.render("+$"+rope.text, True, (0, 15, 0)), (rope.x_text, rope.y_text))
+
+def blit_text(surface, text, pos, font, color=pygame.Color('black')):
+    words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
+    space = font.size(' ')[0]  # The width of a space.
+    max_width, max_height = surface.get_size()
+    x, y = pos
+    for line in words:
+        for word in line:
+            word_surface = font.render(word, 0, color)
+            word_width, word_height = word_surface.get_size()
+            if x + word_width >= max_width:
+                x = pos[0]  # Reset the x.
+                y += word_height  # Start on new row.
+            surface.blit(word_surface, (x, y))
+            x += word_width + space
+        x = pos[0]  # Reset the x.
+        y += word_height  # Start on new row.
+def blit_nor_text(surface, text_in, pos, font, color=pygame.Color('black')):
+    text = font.render(text_in, True, color)
+    surface.blit(text,text.get_rect(center = pos))
+def is_enough_money(item_price):
+    if item_price > get_score():
+        return False
+    return True
+def buy_item(item_id,price):
+    match item_id:
+        case 1: #rock_collectors_book
+            if is_enough_money(price):
+                set_score(get_score()-price)
+                return True
+            else: return False
+        case 2: #strength_drink
+            if is_enough_money(price):
+                set_score(get_score()-price)
+                return True
+            else: return False
+        case 3: #gem_polish
+            if is_enough_money(price):
+                set_score(get_score()-price)
+                return True
+            else: return False
+        case 4: #clover
+            if is_enough_money(price):
+                set_score(get_score()-price)
+                return True
+            else: return False
+        case 5: #dynamite
+            if is_enough_money(price):
+                set_score(get_score()-price)
+                return True
+            else: return False
+
+def get_high_score():
+    

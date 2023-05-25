@@ -1,5 +1,3 @@
-from define import *
-
 class Scene(object):
     def __init__(self):
         pass
@@ -7,7 +5,7 @@ class Scene(object):
     def render(self, screen):
         raise NotImplementedError
 
-    def update(self):
+    def update(self,screen):
         raise NotImplementedError
 
     def handle_events(self, events):

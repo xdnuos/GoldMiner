@@ -12,7 +12,7 @@ def main():
         manager.scene.handle_events(pygame.event.get())
         if get_pause() == False:
             manager.scene.render(screen)
-            manager.scene.update()
+            manager.scene.update(screen)
         else:
             screen.blit(panel_image,panel_image.get_rect(center = (screen_width/2,screen_height/2)))
             text = font.render('Bấm phím Space để tiếp tục', True, (255, 255, 255))
