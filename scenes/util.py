@@ -78,7 +78,7 @@ def load_items(items_data,is_clover=False,is_gem=False,is_rock=False):
 def load_level(level,is_clover,is_gem,is_rock):
     bg_name = None
     bg = None
-    file_path = "levels.game"
+    file_path = "levels.json"
     try :
         with open(file_path, "r") as file:
             data = json.load(file)
@@ -97,7 +97,7 @@ def load_level(level,is_clover,is_gem,is_rock):
             case _:
                 bg = bgA
     except:
-        print("No file levels.game!")
+        print("No file levels.json!")
         sys.exit(0)
     return bg,load_items(data[level]['entities'],is_clover,is_gem,is_rock)
 def random_level(level_number):

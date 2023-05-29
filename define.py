@@ -97,7 +97,8 @@ strength_drink = pygame.image.load('./assets/images/strength_drink.png')
 gem_polish = pygame.image.load('./assets/images/gem_polish.png')
 clover = pygame.image.load('./assets/images/clover.png')
 dynamite_shop = pygame.image.load('./assets/images/dynamite_shop.png')
-
+exit_image = pygame.image.load('./assets/images/exit.png')
+next_image = pygame.image.load('./assets/images/next.png')
 # ---------------------------------------init BG
 bgA = pygame.image.load('./assets/images/bg_level_A.jpg').convert()
 bgA = pygame.transform.scale2x(bgA)

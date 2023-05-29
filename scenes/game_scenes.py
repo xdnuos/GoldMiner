@@ -252,6 +252,8 @@ class GameScene(Scene):
         self.timer = 0
         self.pause_time = 0
         self.pause = False
+        self.exit_button = Button(1050,5,exit_image,0.25)
+        self.next_button = Button(950,0,next_image,0.4)
     def render(self, screen):            
         dt = clock.tick(60) / 1000
         if(self.miner.state == 1):
@@ -270,7 +272,8 @@ class GameScene(Scene):
             self.miner.state = 2
         screen.blit(bg_top,(0,0))
         screen.blit(self.bg,(0,72))
-
+        self.exit_button.render(screen)
+        self.next_button.render(screen)
         #Draw item
         for item in self.items:
             item.draw(dt,screen)
@@ -296,7 +299,7 @@ class GameScene(Scene):
         self.rope.draw(screen)
         draw_point(self.rope,dt,self.miner)
     def update(self,screen):
-        self.timer = 60 - 10*int(pygame.time.get_ticks()/1000 - get_time())
+        self.timer = 60 - int(pygame.time.get_ticks()/1000 - get_time())
         screen.blit(self.text_font.render("Tiền:", True, (0, 0, 0)), (5, 0))
         screen.blit(self.text_font.render("$"+str(get_score()), True, (0, 150, 0)), (55, 0))
         screen.blit(self.text_font.render("Mục tiêu:", True, (0, 0, 0)), (5, 25))
@@ -321,6 +324,10 @@ class GameScene(Scene):
         if(self.timer <0):
             self.next_level()
         for e in events:
+            if self.exit_button.is_click():
+                self.manager.go_to(StartScene())
+            if self.next_button.is_click():
+                self.next_level()
             if e.type == pygame.QUIT:
                 write_high_score(get_score())
                 pygame.quit()
@@ -336,7 +343,7 @@ class GameScene(Scene):
                         set_time(get_time() + pygame.time.get_ticks()/1000 - self.pause_time)
                 if e.key == pygame.K_ESCAPE: #ESC -->tesst
                     self.next_level()
-                if e.key == pygame.K_DOWN and self.rope.timer <=0: # expanding
+                if (e.key == pygame.K_DOWN and self.rope.timer <=0 ): # expanding
                     self.miner.state = 1
                 if e.key == pygame.K_UP: # retracting
                     if(self.rope.have_TNT > 0 and self.rope.item != None):
